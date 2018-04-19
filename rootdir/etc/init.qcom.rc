@@ -443,8 +443,9 @@ on post-fs-data
     mkdir /data/fota 0771
     chown system system /data/fota
 
-    # Create /data/time folder for time-services
+    # Create /data/vendor/time folder for time-services
     mkdir /data/time/ 0700 system system
+    mkdir /date/vendor/time/ 0700 system system
 
     mkdir /data/audio/ 0770 media audio
 
@@ -1100,8 +1101,8 @@ service thermal-engine /system/vendor/bin/thermal-engine
     group root
     writepid /dev/cpuset/system-background/tasks
 
-service time_daemon /system/bin/time_daemon
-    class late_start
+service time_daemon /system/vendor/bin/time_daemon
+    class main
     user root
     group root
     writepid /dev/cpuset/system-background/tasks
