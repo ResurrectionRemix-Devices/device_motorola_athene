@@ -79,7 +79,7 @@ on enable-low-power
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads "1 960000:85 1094400:90 1344000:80"
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 40000
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1516000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 960000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 345600
 
     # enable governor for power cluster
     write /sys/devices/system/cpu/cpu4/online 1
@@ -93,7 +93,7 @@ on enable-low-power
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 1
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads "1 806400:90"
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 40000
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 806400
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 249600
 
     # enable thermal & BCL core_control now
     write /sys/module/msm_thermal/core_control/enabled 1
