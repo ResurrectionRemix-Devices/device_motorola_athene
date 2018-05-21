@@ -238,9 +238,6 @@ ro.usb.bpt_adb=2ec5
 ro.usb.bpteth=2ec3
 ro.usb.bpteth_adb=2ec6
 
-# SSR
-persist.sys.ssr.restart_level=ALL_ENABLE
-
 # DRM
 drm.service.enabled=true
 

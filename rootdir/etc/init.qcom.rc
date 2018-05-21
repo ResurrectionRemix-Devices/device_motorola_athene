@@ -45,8 +45,6 @@ on early-init
     mkdir /customize 0500 root root
 
 on init
-    start qfintverify
-
     # Set permissions for persist partition
     mkdir /persist 0771 system system
 
@@ -570,36 +568,9 @@ on post-fs-data
     setprop vold.post_fs_data_done 1
 
 # Services Start here
-service qfintverify /sbin/qfintverify
-    user root
-    class core
-    oneshot
-
-service ssr_setup /system/bin/ssr_setup
-    oneshot
-    disabled
-
-service ss_ramdump /system/bin/subsystem_ramdump
-    class main
-    user radio
-    group log sdcard_rw sdcard_r diag
-    disabled
-
-on property:persist.sys.ssr.restart_level=*
-    start ssr_setup
-
-on property:persist.sys.ssr.enable_ramdumps=1
-    write /sys/module/subsystem_restart/parameters/enable_ramdumps 1
-    start ss_ramdump
-
-on property:persist.sys.ssr.enable_ramdumps=0
-    write /sys/module/subsystem_restart/parameters/enable_ramdumps 0
 
 on property:sys.boot_completed=1
-    start emmc_ffu
-    start mbm_spy
     start mmi-laser-sh
-    start qe
 
     # CPE fw_name used by sound trigger HAL
     chown media audio /sys/kernel/wcd_cpe0/fw_name
@@ -628,11 +599,6 @@ service cnd /system/bin/cnd
     class main
     socket cnd stream 660 root inet
     group root wakelock
-    writepid /dev/cpuset/system-background/tasks
-
-service dpmd /system/bin/dpmd
-    class late_start
-    socket dpmd stream 660 root system
     writepid /dev/cpuset/system-background/tasks
 
 service config_bt_addr /system/bin/btnvtool -O
@@ -713,18 +679,6 @@ service netmgrd /system/bin/netmgrd
     group radio system wakelock
     writepid /dev/cpuset/system-background/tasks
 
-service ipacm-diag /system/bin/ipacm-diag
-    class main
-    user system
-    socket ipacm_log_file dgram 660 system net_admin
-    group net_admin oem_2950
-
-service ipacm /system/bin/ipacm
-    class main
-    user net_admin
-    group net_admin inet
-    writepid /dev/cpuset/system-background/tasks
-
 service qti /system/vendor/bin/qti
     class main
     user radio
@@ -781,12 +735,6 @@ service cnss_diag /system/bin/cnss_diag -q
 
 service cnss-daemon /system/bin/cnss-daemon -n -l
     class late_start
-
-service loc_launcher /system/bin/loc_launcher
-    #loc_launcher will start as root and set its uid to gps
-    class late_start
-    group gps inet net_raw oem_2950 net_admin wifi
-    writepid /dev/cpuset/system-background/tasks
 
 on property:hw.fm.init=1
     write /sys/module/radio_iris_transport/parameters/fmsmd_set 1
@@ -906,19 +854,6 @@ service ftmipcd /system/bin/ftmipcd
     disabled
     oneshot
 
-service qe /xbin/qe /system
-    class main
-    oneshot
-    disabled
-
-service qe_broadcast /xbin/qe /system -b
-    class main
-    oneshot
-    disabled
-
-on property:persist.qe.trigger=1
-    start qe_broadcast
-
 on property:ro.bootmode=factory
     start ftmipcd
 
@@ -927,13 +862,6 @@ on property:ro.bootmode=mot-factory
 
 on property:persist.mot.demo_mode_charging=1
     write /sys/class/power_supply/battery/device/force_demo_mode 1
-
-service mbm_spy /system/bin/mbm_spy
-    class late_start
-    user system
-    group system
-    oneshot
-    disabled
 
 on property:ro.secure=0
     # disable dmesg restrict for insecure builds
@@ -945,31 +873,9 @@ on property:ro.debuggable=1
     # enable group read/write to /dev/log/kernel
     chmod 0660 /dev/log/kernel
 
-service hw_revs /system/bin/hardware_revisions.sh
-    class late_start
-    user system
-    group system
-    oneshot
-
-service dropboxd /system/bin/dropboxd
-    class late_start
-    user diag
-    group diag
-
 service thermal-com /system/vendor/bin/thermal-engine --minimode
     class main
     user root
-    disabled
-
-service esdpll /system/bin/esdpll -w
-    class main
-    user mot_esdfs
-    group mot_esdfs package_info
-
-service emmc_ffu /system/bin/emmc_ffu.sh
-    user root
-    class core
-    oneshot
     disabled
 
 on property:sys.wifi.tethering=true
@@ -988,12 +894,7 @@ service fingerprintd /system/bin/fingerprintd
 on property:ro.hw.fps=true
     start fingerprintd
 
-service setup_shutdown /system/bin/setup_shutdown.sh
-   class main
-   user system
-   oneshot
-
-#start camera server as daemon
+# Start camera server as daemon
 service qcamerasvr /system/bin/mm-qcamera-daemon
    class late_start
    user camera
